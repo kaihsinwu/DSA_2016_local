@@ -1,0 +1,19 @@
+CC:= g++
+CFLAGS:= -O3 -std=c++0x
+input:=
+
+all: clean invmat
+
+invmat: invmat.o
+	$(CC) $^ $(CFLAGS) -o $@
+
+invmat.o: invmat.cpp
+	$(CC) -c $< $(CFLAGS) -o $@
+
+.PHONY: clean run
+
+clean:
+	@rm -rf *.o invmat
+
+run:
+	./invmat $(input)
