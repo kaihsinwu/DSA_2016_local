@@ -5,11 +5,15 @@
 #include <stdlib.h>
 #include <cstring>
 #include <map>
+#include <vector>
 using namespace std;
-typedef multimap<int, int> mMap;
+typedef map<unsigned int,unsigned int> mMap;
 
-int test_format(mMap &);
+int test_format(mMap &,vector<vector<unsigned int>> &);
 int getVMValue();
 int getPMValue();
 int parseLine(char* );
+void encode(unsigned int &,bool &);
+bool decode(unsigned int &);
+
 #endif // XSTRUCT_HPP_INCLUDED
