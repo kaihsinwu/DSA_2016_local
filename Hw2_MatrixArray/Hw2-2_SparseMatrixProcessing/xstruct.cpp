@@ -34,6 +34,7 @@ int getVMValue(){ //Note: this value is in KB!
     fclose(file);
     return result;
 }
+
 int getPMValue(){ //Note: this value is in KB!
     FILE* file = fopen("/proc/self/status", "r");
     int result = -1;
@@ -169,6 +170,11 @@ unsigned int test_format(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned i
         }
         fclose(pFile);
 
+        //sort process:
+        for(int so=0;so <dbase.size();so++)
+            sort(dbase.at(so).begin(),dbase.at(so).end());
+
+
         cout << "map of total keys conut:" << ID_Dic.size() << endl;
         /*
         cout << "map keys:" << endl;
@@ -206,9 +212,6 @@ unsigned int test_format(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned i
 
 
 
-
-
-
 int accept(unsigned int uid,unsigned int itm,unsigned int tstmp){
     //assume no collision in database.
     /**
@@ -237,12 +240,16 @@ int accept(unsigned int uid,unsigned int itm,unsigned int tstmp){
                     fnum++;
                     cout << fnum; //debug
                     x=decode(dbase.at(idxr->second).at(j).second,t_off);
-                    if(t_off==tstmp-T_start)
-                        return (int)(x-1);
+                    if(t_off==tstmp-T_start){
+                        cout << (int)(x-1) << endl;
+                        return 1;
+                    }
+
                 }
 
 
     }
+    cout << "EMPTY" << endl;
     return 0; // no found;
 }
 
@@ -264,6 +271,7 @@ int items(unsigned int uid1,unsigned int uid2){
     mMap::iterator idxr2=ID_idx.find(uid2);
     int itern=0;
     unsigned int prev=0;
+
     if(idxr1==ID_idx.end()){
         cout << "## Query ERROR ## items(u1,u2):" << endl << " user1 ID: "<<uid1<< "is not found." << endl;
         return -1;
@@ -273,16 +281,17 @@ int items(unsigned int uid1,unsigned int uid2){
         return -1;
     }
 
-    sort(dbase.at(idxr1->second).begin(),dbase.at(idxr1->second).end());
-    sort(dbase.at(idxr2->second).begin(),dbase.at(idxr2->second).end());
-    cout << "Find the same items of user1: " << uid1 << " & user2: " << uid2 << endl;
+    //sort(dbase.at(idxr1->second).begin(),dbase.at(idxr1->second).end());
+    //sort(dbase.at(idxr2->second).begin(),dbase.at(idxr2->second).end());
+
+    //cout << "Find the same items of user1: " << uid1 << " & user2: " << uid2 << endl;
     //simple one.
     for(int i=0;i<dbase.at(idxr1->second).size();i++){
         if(prev!=dbase.at(idxr1->second).at(i).first){
             prev=dbase.at(idxr1->second).at(i).first;
             for(int j=0;j<dbase.at(idxr2->second).size();j++)
                 if(prev==dbase.at(idxr2->second).at(j).first){
-                    cout << " "<<prev << endl;
+                    cout <<prev << endl;
                     itern++;
                     break;
                 }
@@ -291,10 +300,9 @@ int items(unsigned int uid1,unsigned int uid2){
 
     }
 
-    cout << "#total found items: " <<itern << endl;
+    //cout << "#total found items: " <<itern << endl;
     if(itern==0)
-        return 0;
-    return 1;
+        cout << "EMPTY" << endl;
 
 }
 
@@ -307,14 +315,14 @@ int users(unsigned int itm1,unsigned int itm2,unsigned int t1,unsigned int t2){
     char *s1,*s2,*s4;
 
     if(t2<=t1){
-        cout << "## time range ERROR ## t2 cannot be small or equal t1 ." << endl;
+        cout << "## time range ERROR ## users(i1,i2,u1,u2): t2 cannot be small or equal t1 ." << endl;
         return -1;
 
     }
 
     pFile = fopen ("/run/media/kaywu/F40C-9290/rec_log_train.txt" , "rb");
     if (pFile == NULL){
-        cout << "## Read File ERROR ## log file not found." << endl;
+        cout << "## Read File ERROR ## users(i1,i2,u1,u2): log file not found." << endl;
         return -2;
     }
 
@@ -349,13 +357,13 @@ int users(unsigned int itm1,unsigned int itm2,unsigned int t1,unsigned int t2){
 
     unsigned int prevID=0, itern=0;
 
-    cout << "Find the IDs have both item1: " << itm1 << " & item2: " << itm2 <<"from time range: " << t1 << " to " << t2 << endl;
+    //cout << "Find the IDs have both item1: " << itm1 << " & item2: " << itm2 <<"from time range: " << t1 << " to " << t2 << endl;
     for(int i=0;i<itm1_IDs.size();i++){
         if(prevID!=itm1_IDs.at(i)){
             prevID=itm1_IDs.at(i);
             for(int j=0;j<itm2_IDs.size();j++)
                 if(prevID==itm2_IDs.at(j)){
-                    cout << " "<<prevID << endl;
+                    cout <<prevID << endl;
                     itern++;
                     break;
                 }
@@ -363,10 +371,98 @@ int users(unsigned int itm1,unsigned int itm2,unsigned int t1,unsigned int t2){
         }
     }
 
-    cout << "#total found IDs: " <<itern << endl;
+    //cout << "#total found IDs: " <<itern << endl;
     if(itern==0)
-        return 0;
+        cout << "EMPTY" << endl;
+
     return 1;
+
+}
+
+
+int acct_ratio(unsigned int itm,unsigned int thold){
+
+
+
+
+
+    /**
+        Description:
+            get the acceptance ratio of # of users
+            accept when users have item "itm"
+            more than threadhold times.
+
+        Input param
+            itm  : Item
+            thold: threadhold
+
+        return
+            >=0 : the ratio of which require.
+            -1  : no users have item more than threadhold times.
+
+    */
+
+
+    int cnt_itm=0,cnt_have=0,cnt_acc=0;
+    bool accflag =0;
+
+    for(int i=0;i<dbase.size();i++){
+        for(int j=0;j<dbase.at(i).size();j++){
+            if(dbase.at(i).at(j).first>itm){
+
+                cnt_have += (cnt_itm > thold) ;
+                cnt_acc += (cnt_itm > thold) && accflag;
+                cnt_itm=0;
+                accflag=0;
+
+                break;
+            }
+            if(itm == dbase.at(i).at(j).first){
+                accflag = accflag || (bool)( (dbase.at(i).at(j).second << 31) >> 31 );
+                cnt_itm++;
+            }
+        }
+    }
+
+    cout << cnt_acc << "/" <<cnt_have << endl;
+    return 1;
+
+
+}
+
+
+
+
+
+int findtime_item(unsigned int itm,const vector<unsigned int> &Usid){
+
+    mMap::iterator it;
+    vector<unsigned int> toff_list;
+    for(int i=0;i<Usid.size();i++){
+        it=ID_idx.find(Usid[0]);
+        for(int j=0;j<dbase.at(it->second).size();j++)
+            if(dbase.at(it->second).at(j).first==itm)
+                toff_list.push_back( (unsigned int)(dbase.at(it->second).at(j).second >> 1) );
+    }
+
+    if(toff_list.size()==0){
+
+        cout << "EMPTY" << endl;
+
+    }else{
+        unsigned int tmp=0;
+        sort(toff_list.begin(),toff_list.end());
+        for(int i=0;i<toff_list.size();i++)
+            if(tmp!=toff_list[i]){
+                tmp=toff_list[i];
+                cout << toff_list[i] << endl;
+            }
+
+    }
+
+
+    return 1;
+
 
 
 }

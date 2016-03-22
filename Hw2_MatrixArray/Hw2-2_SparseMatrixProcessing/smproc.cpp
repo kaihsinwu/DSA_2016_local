@@ -39,24 +39,42 @@ int main(int argc,char* argv[]){
     T_start=test_format(ID_idx,dbase);
 
 
+    int xxx;
+    float fxxx;
+
     cout << "read time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
     begin_time=clock();
 
-    int xxx=accept(601635,462104,1318348785);//good
+    xxx = accept(601635,462104,1318348785);//good
 
     cout << "accept() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
+    //cout << "result: "<<xxx << endl;
     begin_time=clock();
 
     xxx = items(601635,451392);
 
     cout << "items() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
+    //cout << "result: "<<xxx << endl;
     begin_time=clock();
 
     xxx = users(1774722,563514,1318348785,1318348800);
 
     cout << "users() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
-    cout << xxx << endl;
+    begin_time=clock();
+
+    xxx = acct_ratio(1774722,20);
+
+    cout << "acct_ratio() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
+    begin_time=clock();
+
+    vector<unsigned int> testv={451392,601635};
+    xxx = findtime_item(1774722,testv);
+
+    cout << "acct_ratio() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
+
+
     cout << "OK" <<endl;
+
 
     return 0;
 }

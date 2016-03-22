@@ -35,4 +35,6 @@ int parseLine(char* );
 int accept(unsigned int ,unsigned int ,unsigned int );
 int items(unsigned int ,unsigned int );
 int users(unsigned int ,unsigned int,unsigned int ,unsigned int) ;
+int acct_ratio(unsigned int,unsigned int );
+int findtime_item(unsigned int,const vector<unsigned int> &);
 #endif // XSTRUCT_HPP_INCLUDED
