@@ -2,7 +2,6 @@ CC := g++
 CCFLAGS := -O3 -std=c++0x
 
 
-
 all: smproc
 
 smproc: smproc.o xstruct.o

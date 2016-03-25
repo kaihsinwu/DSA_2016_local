@@ -57,8 +57,6 @@ unsigned int encode( unsigned int toff,bool x){
         by saving timestamp's offset from the first data as uint32.
     */
 
-    toff=(toff << 1);
-    toff +=x;
     return (unsigned int)((toff << 1) + x);
 
 }
@@ -68,21 +66,21 @@ bool decode(unsigned int &toff_e,unsigned int &out_toff){
         using 4 byte to contain 2 col info (+-1) & (timestamp)
         by saving timestamp's offset as uint32 from the first row in data .
     */
-    //get bool x:
-    out_toff=(toff_e >>1);
     //decode time stamp
-    //toff_e= toff_e >>1;
-    return (bool)((toff_e << 31 )>> 31);
+    out_toff=(toff_e >>1);
+
+    //return  bool x:
+    return (bool)(toff_e & MASK );
 }
 
 
 bool pairComp_2(const pair<unsigned int,unsigned int> &A, const pair<unsigned int,unsigned int> &B) {
+    return (A.first <= B.first) && ((unsigned int)(A.second >> 1) <  (unsigned int)(B.second >> 1 ));
 
-  return (unsigned int)(A.second >> 1) <  (unsigned int)(B.second >> 1 ) ;
 
 }
 
-unsigned int test_format(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned int>>> &dbid){
+unsigned int read_DB(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned int>>> &dbid){
     FILE * pFile;
 
     char line[40];//buffer
@@ -96,7 +94,7 @@ unsigned int test_format(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned i
     char *string3;
     char *string4;
 
-    unsigned int T0;
+    int T0;
 
     //debug info :
     unsigned int pos;
@@ -107,7 +105,7 @@ unsigned int test_format(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned i
 
 
 
-    pFile = fopen ("/run/media/kaywu/F40C-9290/rec_log_train.txt" , "rb");
+    pFile = fopen(DB_PATH , "rb");
     if (pFile != NULL){
        mMap::iterator idxr;
 
@@ -171,8 +169,25 @@ unsigned int test_format(mMap &ID_Dic,vector<vector<pair<unsigned int,unsigned i
         fclose(pFile);
 
         //sort process:
-        for(int so=0;so <dbase.size();so++)
+        unsigned int uitmp,uitmp2,j;
+        for(int so=0;so <dbase.size();so++){
+            uitmp=0; uitmp2=0; j=0;
             sort(dbase.at(so).begin(),dbase.at(so).end());
+            while(j!=dbase.at(so).size()){
+
+                if(dbase.at(so).at(j).first==uitmp && dbase.at(so).at(j).second==uitmp2){dbase.at(so).erase(dbase.at(so).begin()+j);}
+                else{
+                    uitmp=dbase.at(so).at(j).first;
+                    uitmp2=dbase.at(so).at(j).second;
+                    j++;
+                }
+
+
+            }
+
+            //chk duplicate:
+
+        }
 
 
         cout << "map of total keys conut:" << ID_Dic.size() << endl;
@@ -229,17 +244,21 @@ int accept(unsigned int uid,unsigned int itm,unsigned int tstmp){
             1 : accept state
             -1: deny state
     */
-    int fnum=0;
+    //int fnum=0;
     bool x;
     unsigned int t_off;
     mMap::iterator idxr=ID_idx.find(uid);
 
     if(idxr!=ID_idx.end()){
+            //cout << "find! " << "elements" << dbase.at(idxr->second).size() << endl;
             for(int j=0;j<dbase.at(idxr->second).size();j++)
                 if(dbase.at(idxr->second).at(j).first==itm){
-                    fnum++;
-                    cout << fnum; //debug
+                    //fnum++;
+                    //cout << "item match" << fnum << endl;
                     x=decode(dbase.at(idxr->second).at(j).second,t_off);
+                    //t_off=t_off>>1;
+                    //cout << x << " " << t_off << endl;
+                    //cout << "T0="<< T_start << "tstmp="<<tstmp << endl;
                     if(t_off==tstmp-T_start){
                         cout << (int)(x-1) << endl;
                         return 1;
@@ -249,6 +268,7 @@ int accept(unsigned int uid,unsigned int itm,unsigned int tstmp){
 
 
     }
+
     cout << "EMPTY" << endl;
     return 0; // no found;
 }
@@ -314,19 +334,14 @@ int users(unsigned int itm1,unsigned int itm2,unsigned int t1,unsigned int t2){
     vector<unsigned int> itm2_IDs;
     char *s1,*s2,*s4;
 
-    if(t2<=t1){
-        cout << "## time range ERROR ## users(i1,i2,u1,u2): t2 cannot be small or equal t1 ." << endl;
-        return -1;
-
-    }
-
-    pFile = fopen ("/run/media/kaywu/F40C-9290/rec_log_train.txt" , "rb");
+    pFile = fopen (DB_PATH , "rb");
     if (pFile == NULL){
         cout << "## Read File ERROR ## users(i1,i2,u1,u2): log file not found." << endl;
         return -2;
     }
 
     fseek(pFile,0,toff2fpos.at((t1-T_start)/1000));
+
     while(1){
 
 
@@ -403,23 +418,18 @@ int acct_ratio(unsigned int itm,unsigned int thold){
     */
 
 
-    int cnt_itm=0,cnt_have=0,cnt_acc=0;
-    bool accflag =0;
+    int cnt_have=0,cnt_acc=0;
+
 
     for(int i=0;i<dbase.size();i++){
-        for(int j=0;j<dbase.at(i).size();j++){
-            if(dbase.at(i).at(j).first>itm){
+        if(dbase.at(i).size() > thold){
+            cnt_have ++;
+            for(int j=0;j<dbase.at(i).size();j++){
+                if(dbase.at(i).at(j).first==itm && (bool)( dbase.at(i).at(j).second & MASK ) ){
+                    cnt_acc += 1;
+                    break;
+                }
 
-                cnt_have += (cnt_itm > thold) ;
-                cnt_acc += (cnt_itm > thold) && accflag;
-                cnt_itm=0;
-                accflag=0;
-
-                break;
-            }
-            if(itm == dbase.at(i).at(j).first){
-                accflag = accflag || (bool)( (dbase.at(i).at(j).second << 31) >> 31 );
-                cnt_itm++;
             }
         }
     }
@@ -434,15 +444,20 @@ int acct_ratio(unsigned int itm,unsigned int thold){
 
 
 
-int findtime_item(unsigned int itm,const vector<unsigned int> &Usid){
+int findtime_item(unsigned int itm,vector<unsigned int> &Usid){
 
     mMap::iterator it;
     vector<unsigned int> toff_list;
     for(int i=0;i<Usid.size();i++){
-        it=ID_idx.find(Usid[0]);
-        for(int j=0;j<dbase.at(it->second).size();j++)
-            if(dbase.at(it->second).at(j).first==itm)
+        it=ID_idx.find(Usid[i]);
+
+        for(int j=0;j<dbase.at(it->second).size();j++){
+            if(dbase.at(it->second).at(j).first==itm){
+
                 toff_list.push_back( (unsigned int)(dbase.at(it->second).at(j).second >> 1) );
+            }
+        }
+
     }
 
     if(toff_list.size()==0){
@@ -455,7 +470,7 @@ int findtime_item(unsigned int itm,const vector<unsigned int> &Usid){
         for(int i=0;i<toff_list.size();i++)
             if(tmp!=toff_list[i]){
                 tmp=toff_list[i];
-                cout << toff_list[i] << endl;
+                cout << toff_list[i] + T_start << endl;
             }
 
     }

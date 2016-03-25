@@ -3,10 +3,13 @@
 #include <cstdlib>
 #include <iomanip>
 #include <fstream>
-#include <ctime>
+#include <string>
 #include "xstruct.hpp"
 #include <vector>
+#include <sstream>
+
 using namespace std;
+
 
 
 mMap ID_idx;
@@ -16,7 +19,7 @@ unsigned int T_start;
 
 int main(int argc,char* argv[]){
 
-    clock_t begin_time = clock();
+
 // do something
 
 
@@ -36,44 +39,62 @@ int main(int argc,char* argv[]){
     //read:
 
 
-    T_start=test_format(ID_idx,dbase);
+    T_start=read_DB(ID_idx,dbase);
 
 
-    int xxx;
-    float fxxx;
+    int n; //# of query
+    string qtype;
+    unsigned int qargv[4];//(4);
+    vector<unsigned int> argUsidv;
+    string stmp;
+    unsigned int tmparg;
 
-    cout << "read time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
-    begin_time=clock();
+    cin >> n;
 
-    xxx = accept(601635,462104,1318348785);//good
+    while(1){
+        //cin >> qtype ;
+        if(!(cin >> qtype)) break;
+        //cout << qtype <<endl;//<< (qtype=='accept');
 
-    cout << "accept() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
-    //cout << "result: "<<xxx << endl;
-    begin_time=clock();
+            if(qtype== "accept"){
+                for(int j=0;j<3;j++) cin>>qargv[j];
+                //for(int ww=0;ww<3;ww++) cout << qargv[ww] << "\t";
+                accept(qargv[0],qargv[1],qargv[2]);
+            }
+            else if(qtype== "items"){
+                for(int j=0;j<2;j++) cin>>qargv[j];
+                //for(int ww=0;ww<3;ww++) cout << qargv[ww] << "\t";
+                items(qargv[0],qargv[1]);
+            }
+            else if(qtype== "users"){
+                for(int j=0;j<4;j++) cin>>qargv[j];
+                //for(int ww=0;ww<3;ww++) cout << qargv[ww] << "\t";
+                users(qargv[0],qargv[1],qargv[2],qargv[3]);
+            }
+            else if(qtype== "ratio"){
+                for(int j=0;j<2;j++) cin>>qargv[j];
+                //for(int ww=0;ww<3;ww++) cout << qargv[ww] << "\t";
+                acct_ratio(qargv[0],qargv[1]);
+            }
+            else if(qtype== "findtime_item"){
+                argUsidv.clear();
 
-    xxx = items(601635,451392);
-
-    cout << "items() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
-    //cout << "result: "<<xxx << endl;
-    begin_time=clock();
-
-    xxx = users(1774722,563514,1318348785,1318348800);
-
-    cout << "users() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
-    begin_time=clock();
-
-    xxx = acct_ratio(1774722,20);
-
-    cout << "acct_ratio() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
-    begin_time=clock();
-
-    vector<unsigned int> testv={451392,601635};
-    xxx = findtime_item(1774722,testv);
-
-    cout << "acct_ratio() time "<<float( clock () - begin_time ) /  CLOCKS_PER_SEC << "s\n";
+                cin.ignore();
+                getline(cin,stmp);
+                istringstream ss(stmp);
+                ss >> qargv[0];
+                while(1){
+                    if(!(ss >> tmparg))break;
+                        argUsidv.push_back(tmparg);
+                }
+                //for(int ww=0;ww<3;ww++) cout << qargv[ww] << "\t";
+                findtime_item(qargv[0],argUsidv);
+            }
 
 
-    cout << "OK" <<endl;
+            //cout << endl;
+    }
+
 
 
     return 0;
