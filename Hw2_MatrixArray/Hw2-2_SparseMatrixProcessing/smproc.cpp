@@ -7,13 +7,11 @@
 #include "xstruct.hpp"
 #include <vector>
 #include <sstream>
-
 using namespace std;
 
 
-
+//global variable
 mMap ID_idx;
-vector<unsigned int> toff2fpos; // save the position of file every 1000 timestemp offset.
 vector<vector<pair<unsigned int,unsigned int>>> dbase;
 unsigned int T_start;
 
@@ -44,7 +42,7 @@ int main(int argc,char* argv[]){
 
     int n; //# of query
     string qtype;
-    unsigned int qargv[4];//(4);
+    unsigned int qargv[4];
     vector<unsigned int> argUsidv;
     string stmp;
     unsigned int tmparg;
@@ -52,9 +50,9 @@ int main(int argc,char* argv[]){
     cin >> n;
 
     while(1){
-        //cin >> qtype ;
+
         if(!(cin >> qtype)) break;
-        //cout << qtype <<endl;//<< (qtype=='accept');
+
 
             if(qtype== "accept"){
                 for(int j=0;j<3;j++) cin>>qargv[j];
@@ -91,8 +89,6 @@ int main(int argc,char* argv[]){
                 findtime_item(qargv[0],argUsidv);
             }
 
-
-            //cout << endl;
     }
 
 

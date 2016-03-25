@@ -2,31 +2,30 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="Makefile" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="xstruct.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="275" topLine="0" />
+			<Cursor1 position="555" topLine="1" />
 		</Cursor>
 	</File>
-	<File name="xstruct.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Makefile" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="968" topLine="9" />
+			<Cursor1 position="37" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="smproc.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2497" topLine="54" />
+			<Cursor1 position="973" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="xstruct.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="12858" topLine="420" />
+			<Cursor1 position="1824" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="12" />
 			<Collapse line="21" />
 			<Collapse line="37" />
-			<Collapse line="76" />
 		</Folding>
 	</File>
-	<EditorTabsLayout layout="065cca1056f4aea30069221000000002=0;Hw2-2_SparseMatrixProcessing:Makefile,1;Hw2-2_SparseMatrixProcessing:smproc.cpp,*2;Hw2-2_SparseMatrixProcessing:xstruct.cpp,3;Hw2-2_SparseMatrixProcessing:xstruct.hpp@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=471;besth=272;minw=471;minh=272;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=065cca1056f4aea30069221000000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
+	<EditorTabsLayout layout="05d0e1f056f50446006f158000000002=0;Hw2-2_SparseMatrixProcessing:Makefile,1;Hw2-2_SparseMatrixProcessing:smproc.cpp,*2;Hw2-2_SparseMatrixProcessing:xstruct.cpp@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=471;besth=272;minw=471;minh=272;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=05d0e1f056f50446006f158000000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
 </CodeBlocks_layout_file>

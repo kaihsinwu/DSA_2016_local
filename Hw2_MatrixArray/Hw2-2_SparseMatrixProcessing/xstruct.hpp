@@ -20,14 +20,14 @@ typedef map<unsigned int,unsigned int> mMap;
 extern  mMap ID_idx;
 extern  vector<vector<pair<unsigned int,unsigned int>>> dbase;
 extern  unsigned int T_start;
-extern  vector<unsigned int> toff2fpos;
 
 
+//read database
 unsigned int read_DB(mMap &,vector<vector<pair<unsigned int,unsigned int>>> &);
 
 //crypto routine:
 unsigned int encode(unsigned int  ,bool );
-pair<bool,unsigned int> decode(unsigned int &);
+bool decode(unsigned int &,unsigned int &);
 
 //memory mesurement:
 int getVMValue();
@@ -36,9 +36,11 @@ int parseLine(char* );
 
 
 //query :
-int accept(unsigned int ,unsigned int ,unsigned int );
-int items(unsigned int ,unsigned int );
-int users(unsigned int ,unsigned int,unsigned int ,unsigned int) ;
-int acct_ratio(unsigned int,unsigned int );
-int findtime_item(unsigned int,vector<unsigned int> &);
+int accept(const unsigned int &,const unsigned int & ,const unsigned int &);
+int items(const unsigned int &,const unsigned int &);
+int users(const unsigned int &,const unsigned int &,const unsigned int &,const unsigned int &) ;
+int acct_ratio(const unsigned int &,const unsigned int &);
+int findtime_item(const unsigned int &,vector<unsigned int> &);
+
+
 #endif // XSTRUCT_HPP_INCLUDED
